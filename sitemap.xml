@@ -13,8 +13,8 @@
 <url> <loc>https://akv4k8s.io/tutorials</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://akv4k8s.io/components/1-controller</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://akv4k8s.io/components/2-env-injector</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
-<url> <loc>https://akv4k8s.io/components/3-when-to-use-which</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://akv4k8s.io/tutorials/0-prerequisites</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
+<url> <loc>https://akv4k8s.io/components/3-when-to-use-which</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://akv4k8s.io/tutorials/1-secret</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://akv4k8s.io/tutorials/2-certificate</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://akv4k8s.io/tutorials/3-signing-key</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
