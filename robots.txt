@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://akv4k8s.io/sitemap.xml
-Host: https://akv4k8s.io
