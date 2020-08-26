@@ -85,14 +85,14 @@
 <p>The Controller will need Azure Key Vault credentials to get Secrets from Azure Key Vault and store them as Kubernetes Secrets. In order to provide custom credentials, pass inn the value <code class="language-text">keyVault.customAuth.enabled=true</code> to the Controller Helm Chart together with one of the <a href="#custom-authentication-options">Authentication options</a> described below.</p>
 <p>Fore more details, see the <a href="/stable/azure-key-vault-controller/README/#installing-the-chart">Controller Helm Chart</a>.</p>
 <h2 id="custom-authentication-for-the-env-injector" style="position:relative"><a href="#custom-authentication-for-the-env-injector" aria-label="custom authentication for the env injector permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Custom Authentication for the Env Injector</h2>
-<p>The Env-Injector operates locally compared to the Controller, which operates centrally. The Env-Injector running inside a Pod&#x27;s container needs access to Azure Key Vault credentials to inject secrets. Two options are available to make credentials available during environment injection:</p>
+<p>The Env-Injector execute locally inside your Pod and needs access to Azure Key Vault credentials to inject secrets. Two options are available:</p>
 <ol>
-<li>The Env-Injector running inside the container request credentials from the Env-Injector authentication service</li>
-<li>The Pod hosting the container provide credentials to the Env-Injector running inside the container</li>
+<li>The Env-Injector running inside the container request credentials from the Env-Injector authentication service (default / centralized)</li>
+<li>The Pod hosting the container provide credentials to the Env-Injector running inside the container (custom authentication / local)</li>
 </ol>
-<p>For option 1 you only provide credentials once, during the installation of the Env-Injector.</p>
-<p>For option 2 you have to provide Azure Key Vault credentials to every Pod using Env-Injector.</p>
-<p>Option 1 is easiest and most convinient, but also give ALL pods</p>
+<p>For option 1 you only provide credentials when installation of the Env-Injector.</p>
+<p>For option 2 you provide credentials to every Pod that will use the Env-Injector.</p>
+<p>Option 1 is easiest and most convenient, but will give the same credentials to all Pods using Env-Injector. </p>
 <p><strong>Recommendations:</strong></p>
 
 
@@ -119,12 +119,38 @@
 
 
 
-<style data-emotion-css="12nk8bc">.css-12nk8bc{overflow:auto;margin-bottom:1.45rem;}</style><div class="css-12nk8bc ernxcdh1"><style data-emotion-css="18vwrfu">.css-18vwrfu{border:1px solid #DEE2E7;border-spacing:0;border-radius:4px;}.css-18vwrfu th,.css-18vwrfu td{padding:16px;border-bottom:1px solid #DEE2E7;}.css-18vwrfu tbody tr:last-child td{border:0;}.css-18vwrfu th{-webkit-letter-spacing:0.142em;-moz-letter-spacing:0.142em;-ms-letter-spacing:0.142em;letter-spacing:0.142em;text-transform:uppercase;font-size:13px;font-weight:normal;color:#5A6270;text-align:inherit;}.css-18vwrfu td{vertical-align:top;}.css-18vwrfu td p{font-size:inherit;line-height:inherit;}.css-18vwrfu td code{white-space:normal;}</style><table class="css-18vwrfu ernxcdh2"><thead><tr><th></th><th style="text-align:center">Env-Injector Auth Service</th><th style="text-align:center">Pass credentials to every Pod</th></tr></thead><tbody><tr><td>Using one Azure Key Vault per cluster</td><td style="text-align:center">✔</td><td style="text-align:center"></td></tr><tr><td>Using multiple Azure Key Vaults per cluster (f.ex. one Key Vault per application) and it is OK to use the same credentials to all Key Vaults</td><td style="text-align:center">✔</td><td style="text-align:center"></td></tr><tr><td>Multi-tenant environment (multiple Azure Key Vaults)</td><td style="text-align:center"></td><td style="text-align:center">✔</td></tr></tbody></table></div>
-<p>| Provide credentials only during Env-Injector install | ✔
-| Must provide credentials to every Pod using Env-Injector | | ✔|
-| Azure Key Vault credentials available to all Pods using Env-Injector | ✔ ||
-| Recommended if there is one Azure Key Vault per cluster | ✔ | |
-In practice this means the code that downloads the secrets for Azure Key Vault runs inside the application Container and are executed before the original executable of that container. After the container has started, a Kubernetes user with the right credentials are able to exec into the container. Several steps have been taken to avoid exposing sensitive data in this scenario and are explained below. Another scenario is data stored in Kubernetes Secrets</p>
+<style data-emotion-css="12nk8bc">.css-12nk8bc{overflow:auto;margin-bottom:1.45rem;}</style><div class="css-12nk8bc ernxcdh1"><style data-emotion-css="18vwrfu">.css-18vwrfu{border:1px solid #DEE2E7;border-spacing:0;border-radius:4px;}.css-18vwrfu th,.css-18vwrfu td{padding:16px;border-bottom:1px solid #DEE2E7;}.css-18vwrfu tbody tr:last-child td{border:0;}.css-18vwrfu th{-webkit-letter-spacing:0.142em;-moz-letter-spacing:0.142em;-ms-letter-spacing:0.142em;letter-spacing:0.142em;text-transform:uppercase;font-size:13px;font-weight:normal;color:#5A6270;text-align:inherit;}.css-18vwrfu td{vertical-align:top;}.css-18vwrfu td p{font-size:inherit;line-height:inherit;}.css-18vwrfu td code{white-space:normal;}</style><table class="css-18vwrfu ernxcdh2"><thead><tr><th></th><th style="text-align:center">Env-Injector Auth Service</th><th style="text-align:center">Credentials in Pod</th></tr></thead><tbody><tr><td>Using one Azure Key Vault per cluster</td><td style="text-align:center">✔</td><td style="text-align:center"></td></tr><tr><td>Using multiple Azure Key Vaults per cluster (f.ex. one Key Vault per application) and it is OK to use the same credentials to all Key Vaults</td><td style="text-align:center">✔</td><td style="text-align:center"></td></tr><tr><td>Multi-tenant environment (multiple Azure Key Vaults)</td><td style="text-align:center"></td><td style="text-align:center">✔</td></tr></tbody></table></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="css-12nk8bc ernxcdh1"><table class="css-18vwrfu ernxcdh2"><thead><tr><th></th><th style="text-align:center">Env-Injector Auth Service</th><th style="text-align:center">Credentials in Pod</th></tr></thead><tbody><tr><td>Provide credentials only during Env-Injector install</td><td style="text-align:center">✔</td><td style="text-align:center"></td></tr><tr><td>Must provide credentials to every Pod when using Env-Injector</td><td style="text-align:center"></td><td style="text-align:center">✔</td></tr><tr><td>The same Azure Key Vault credentials used in all Pods using Env-Injector</td><td style="text-align:center">✔</td><td style="text-align:center"></td></tr><tr><td>Recommended if there is one Azure Key Vault per cluster</td><td style="text-align:center">✔</td><td style="text-align:center"></td></tr></tbody></table></div>
 <p>To use custom authentication for the Env Injector there are three options:</p>
 <ol>
 <li>Use Microsft&#x27;s <a href="https://github.com/Azure/aad-pod-identity" target="_blank" rel="noopener noreferrer">AAD Pod Identity</a> (see <a href="/stable/azure-key-vault-env-injector/README/#using-custom-authentication-with-aad-pod-identity">Using Custom Authentication with AAD Pod Identity</a>)</li>
@@ -133,40 +159,6 @@ In practice this means the code that downloads the secrets for Azure Key Vault r
 </ol>
 <p>To avoid using option no. 3, support for a more convenient solution (no. 2) is supported where the Azure Key Vault credentials in the Env Injector (using <a href="#custom-authentication-options">Authentication options</a> below) is &quot;forwarded&quot; to the the Pods. The Env Injector will create a Kubernetes Secret containing the credentials and mutate the Pod&#x27;s env section to reference the credentials in the Secret. </p>
 <p>Fore more details, see the <a href="/stable/azure-key-vault-env-injector/README/#installing-the-chart">Env Injector Helm Chart</a>.</p>
-<h3 id="centralized-vs-local-credentials" style="position:relative"><a href="#centralized-vs-local-credentials" aria-label="centralized vs local credentials permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Centralized vs Local credentials</h3>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="css-12nk8bc ernxcdh1"><table class="css-18vwrfu ernxcdh2"><thead><tr><th>Auth method</th><th>Centralized</th><th>Local</th></tr></thead><tbody><tr><td><a href="https://github.com/Azure/aad-pod-identity" target="_blank" rel="noopener noreferrer">AAD Pod Identity</a></td><td>(✔)</td><td>✔</td></tr><tr><td>Client credentials</td><td>✔</td><td>✔</td></tr><tr><td>Certificate</td><td>✔</td><td>✔</td></tr><tr><td>Username/password</td><td>✔</td><td>✔</td></tr></tbody></table></div>
-<p>With centralized credentials, the credentials are stored in the same Kuberntes namespace as the Env-Injector and the Env-Injector can provide ...</p>
-<p>Local credentials is when the credentials are passed directly to the Pod</p>
 <h2 id="custom-authentication-options" style="position:relative"><a href="#custom-authentication-options" aria-label="custom authentication options permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Custom Authentication Options</h2>
 <p>The following authentication options are available:</p>
 
