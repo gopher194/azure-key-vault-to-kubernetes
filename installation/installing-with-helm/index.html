@@ -92,7 +92,7 @@ individual Helm charts:</p>
 <li><a href="https://github.com/SparebankenVest/public-helm-charts/tree/master/stable/azure-key-vault-env-injector/README.md" target="_blank" rel="noopener noreferrer">Env Injector</a></li>
 </ul>
 <h2 id="installing-with-helm-outside-azure-aks" style="position:relative"><a class="headingLink" href="#installing-with-helm-outside-azure-aks">Installing with Helm outside Azure AKS</a></h2>
-<p>When running inside Azure AKS, akv2k8s can use the AKS cluster credentials for authorizing with Azure Key Vault (default behavior). Outside Azure AKS - credentials (Azure Service Principal) must be provided by setting <code class="language-text">keyVault.customAuth=true</code>. See <a href="/security/authentication/">Authentication</a> for more details.</p>
+<p>When running inside Azure AKS, akv2k8s will use the AKS cluster credentials by default to authenticate with Azure Key Vault. Outside Azure AKS - credentials must be provided by setting <code class="language-text">keyVault.customAuth=true</code> and provide credentials as documentend under <a href="/security/authentication/">Authentication</a> for more details.</p>
 <p>Create <code class="language-text">akv2k8s</code> namespace:</p>
 <div class="gatsby-highlight" data-language="bash"><div class="css-1gcd36t e1ulzjg70"><div class="css-j1ow3a e1ulzjg71"><button class="css-hga22n">Copy</button></div><div class="css-r8v8pb e1ulzjg73"><pre style="counter-reset:linenumber NaN" class="language-bash line-numbers"><code class="language-bash">kubectl create ns akv2k8s</code><span aria-hidden="true" class="line-numbers-rows" style="white-space:normal;width:auto;left:0"><span></span></span></pre></div></div></div>
 <p>Add Helm repository:</p>
